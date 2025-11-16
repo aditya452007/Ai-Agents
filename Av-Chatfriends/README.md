@@ -1,6 +1,6 @@
 # AV ChatFriends - AI Chat Application
 
-A ChatGPT-like web interface for interacting with a local AI model (llama.cpp) via an OpenAI-compatible API.
+A ChatGPT-like web interface for interacting with a local AI model ( Docker Model runner) via an OpenAI-compatible API.
 
 ## 👥 Project Team
 
@@ -12,7 +12,7 @@ A ChatGPT-like web interface for interacting with a local AI model (llama.cpp) v
 ## 🚀 Features
 
 - 🤖 **ChatGPT-like web interface** with modern, responsive UI
-- 🔌 **Local llama.cpp integration** via OpenAI-compatible API
+- 🔌 **Local Docker Model runner integration** via OpenAI-compatible API
 - 🐳 **Docker support** for containerized deployment
 - 📝 **Comprehensive error handling** and edge case testing
 - 🎨 **Modern UI/UX** with dark theme and smooth animations
@@ -24,7 +24,7 @@ A ChatGPT-like web interface for interacting with a local AI model (llama.cpp) v
 ## 📋 Requirements
 
 - **Python:** 3.13+
-- **Local llama.cpp server:** Running on port 12434
+- **Local Docker Model runner server:** Running on port 12434
 - **Model:** `ai/smollm2` (or configure your own model)
 
 ---
