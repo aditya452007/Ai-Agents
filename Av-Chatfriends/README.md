@@ -4,8 +4,8 @@ A ChatGPT-like web interface for interacting with a local AI model ( Docker Mode
 
 ## 👥 Project Team
 
-**Frontend Development:** Vishal Koushal  
-**Backend & Architecture:** Aaditya Thakur
+**Frontend Development:** [Vishal Koushal](https://github.com/vishal25521)  
+**Backend & Architecture:** [Aaditya Thakur](https://github.com/aditya452007)
 
 ---
 
