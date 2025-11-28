@@ -43,13 +43,17 @@ def generate_response(prompt: str, model: Optional[str] = None,
     Generate a response from local llama.cpp model.
     
     Args:
-        prompt: The input prompt/question to send to the model
-        model: Model name to use (defaults to MODEL_NAME from env)
-        max_tokens: Maximum tokens to generate (defaults to MAX_TOKENS from env)
-        temperature: Temperature for generation (defaults to TEMPERATURE from env)
+        prompt (str): The input prompt/question to send to the model.
+        model (Optional[str]): Model name to use (defaults to MODEL_NAME from env).
+        max_tokens (Optional[int]): Maximum tokens to generate (defaults to MAX_TOKENS from env).
+        temperature (Optional[float]): Temperature for generation (defaults to TEMPERATURE from env).
         
     Returns:
-        dict: Response dictionary with 'success', 'message', and optionally 'error' keys
+        dict: Response dictionary with keys:
+            - 'success' (bool): Whether the generation was successful.
+            - 'message' (str): The generated text content or empty string on failure.
+            - 'model' (str): The model name used (only on success).
+            - 'error' (str): Error message description (only on failure).
         
     Examples:
         >>> # Test with empty prompt (edge case)
@@ -133,7 +137,12 @@ def generate_response(prompt: str, model: Optional[str] = None,
 
 @app.route('/')
 def index():
-    """Serve the main HTML page."""
+    """
+    Serve the main HTML page.
+
+    Returns:
+        Response: Flask response object containing the index.html file.
+    """
     return send_from_directory('.', 'index.html')
 
 
@@ -142,20 +151,29 @@ def chat():
     """
     API endpoint for chat completion.
     
+    Receives a JSON payload with the prompt and optional parameters, calls the
+    model generation function, and returns the result.
+
+    Args:
+        None (Uses Flask request context).
+
     Expected JSON payload:
-    {
-        "prompt": "user's message",
-        "model": "optional model name",
-        "max_tokens": optional integer,
-        "temperature": optional float
-    }
+        {
+            "prompt": "user's message",
+            "model": "optional model name",
+            "max_tokens": optional integer,
+            "temperature": optional float
+        }
     
-    Returns JSON response:
-    {
-        "success": boolean,
-        "message": "response text",
-        "error": "error message if success is false"
-    }
+    Returns:
+        Response: JSON response containing:
+            - success (bool): Whether the request was successful.
+            - message (str): The response text.
+            - error (str): Error message if applicable.
+        Status Code:
+            - 200: Success.
+            - 400: Bad Request (missing prompt).
+            - 500: Server Error.
     """
     try:
         data = request.get_json()
@@ -192,7 +210,22 @@ def chat():
 
 @app.route('/api/health', methods=['GET'])
 def health():
-    """Health check endpoint."""
+    """
+    Health check endpoint.
+
+    Provides the current status of the application and configuration details.
+
+    Args:
+        None.
+
+    Returns:
+        Response: JSON response containing:
+            - status (str): "healthy".
+            - base_url (str): Configured model API base URL.
+            - model (str): Configured model name.
+            - client_initialized (bool): Whether the OpenAI client is active.
+        Status Code: 200
+    """
     return jsonify({
         'status': 'healthy',
         'base_url': BASE_URL,

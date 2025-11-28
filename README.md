@@ -1,90 +1,80 @@
-# AI Agents Showcase: A Diverse Collection of Intelligent Systems
+# AI Agents Repository
 
-This repository serves as a showcase for a variety of AI agents, each demonstrating unique capabilities and leveraging different technologies. From conversational AI to Retrieval-Augmented Generation (RAG) and customer support automation, these projects highlight the diverse possibilities of modern AI development.
+This repository showcases a variety of AI agent implementations, ranging from chat applications and RAG (Retrieval-Augmented Generation) pipelines to specialized MCP (Model Context Protocol) servers.
 
-## 🚀 Agents Overview
+## Repository Structure
 
-This collection features three distinct AI agent implementations:
-
-1.  **Av-Chatfriends:** A real-time, ChatGPT-like web application.
-2.  **RAG Agents:** High-performance RAG pipelines for interacting with documents and websites.
-3.  **Google Adk Customer Support Agent:** An advanced customer support agent built with Google's Agent Development Kit.
-
----
+The repository is organized into the following main projects:
 
 ### 1. Av-Chatfriends
+A ChatGPT-like web application that runs locally using `llama.cpp` and `flask`. It provides a web interface for interacting with local LLMs.
 
-**[➡️ View Code](./Av-Chatfriends)**
+*   **Path:** `Av-Chatfriends/`
+*   **Key Features:**
+    *   Flask-based backend.
+    *   OpenAI-compatible API integration (targeting local `llama.cpp`).
+    *   Simple HTML/JS frontend.
+    *   Docker support.
+*   **Setup:** See [Av-Chatfriends/README.md](Av-Chatfriends/README.md) for details.
 
-A ChatGPT-like web interface for interacting with a local AI model via an OpenAI-compatible API. This project demonstrates a complete, containerized web application for real-time conversational AI.
+### 2. MCP (Model Context Protocol) Servers
+This directory contains implementations of MCP servers, which allow AI models to interact with local resources.
 
-**Key Features:**
-- **Real-time Chat Interface:** Modern, responsive UI for seamless interaction.
-- **Local Model Integration:** Connects to a local Docker Model runner.
-- **Docker Support:** Fully containerized for easy deployment.
-- **Health Monitoring:** Includes an API endpoint for system health checks.
+*   **Path:** `MCP/`
+*   **Sub-projects:**
+    *   **File System Management MCP:** A server that provides full CRUD capabilities for file system operations.
+        *   Path: `MCP/File_System_Management_MCP/`
+        *   Setup: See [MCP/File_System_Management_MCP/SETUP_INSTRUCTIONS.md](MCP/File_System_Management_MCP/SETUP_INSTRUCTIONS.md).
+    *   **Terminal Execution MCP:** A server that enables command execution across various shells (CMD, PowerShell, WSL, Git Bash).
+        *   Path: `MCP/Terminal_Execution_MCP/`
+        *   Setup: See [MCP/Terminal_Execution_MCP/SETUP_INSTRUCTIONS.md](MCP/Terminal_Execution_MCP/SETUP_INSTRUCTIONS.md).
 
-**Technologies Used:**
-- **Backend:** Flask, Python
-- **Frontend:** HTML, JavaScript
-- **Deployment:** Docker
+### 3. RAG (Retrieval-Augmented Generation)
+Contains Jupyter notebooks demonstrating RAG pipelines for different data sources.
 
----
+*   **Path:** `RAG/`
+*   **Contents:**
+    *   `RAG_For_Url.ipynb`: RAG pipeline for querying web content.
+    *   `Rag_For_Pdf.ipynb`: RAG pipeline for querying PDF documents.
+*   **Requirements:** See `RAG/requirements.txt`.
 
-### 2. RAG Agents: Document & Web Intelligence
+### 4. Google Adk
+Demonstrates a customer support agent using Google's Agent Development Kit (ADK) and Gemini models.
 
-**[➡️ View Code](./RAG)**
+*   **Path:** `Google Adk/`
+*   **Contents:**
+    *   `customer-support-agent.ipynb`: A comprehensive notebook implementing a support agent.
+*   **Requirements:** See `Google Adk/requirements.txt`.
 
-A high-performance implementation of **Retrieval-Augmented Generation (RAG)** pipelines powered by **Google Gemini** and **LangChain**. This project enables natural language interaction with both static PDF documents and dynamic web content.
+## Getting Started
 
-**Key Features:**
-- **PDF Document Agent:** Ingests, chunks, and indexes PDF documents for querying.
-- **Web URL Agent:** Scrapes and indexes content from URLs to "chat" with live websites.
-- **Optimized Performance:** Designed for low-latency inference on standard CPU environments.
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository_url>
+    cd <repository_name>
+    ```
 
-**Technologies Used:**
-- **LLM:** Google Gemini
-- **Orchestration:** LangChain
-- **Vector Store:** FAISS / ChromaDB
-- **Embeddings:** HuggingFace
+2.  **Explore a project:**
+    Navigate to the project directory you are interested in and follow its specific `README.md` or `SETUP_INSTRUCTIONS.md`.
 
----
+    *   For the Chat App: `cd Av-Chatfriends`
+    *   For MCP Servers: `cd MCP`
+    *   For RAG Notebooks: `cd RAG`
 
-### 3. Google Adk Customer Support Agent
+## Prerequisites
 
-**[➡️ View Code](./Google%20Adk)**
+*   **Python 3.10+** is recommended for all projects.
+*   **Docker** is optional but recommended for `Av-Chatfriends`.
+*   **Jupyter Notebook/Lab** is required to run the notebooks in `RAG` and `Google Adk`.
+*   **API Keys**: Some projects (like `Google Adk` or `RAG`) may require API keys (e.g., Google Gemini, OpenAI) to be set in environment variables or Colab secrets.
 
-An advanced, multi-tool customer support agent built using **Google's Agent Development Kit (ADK)**. This agent demonstrates how to create a sophisticated system that can interact with multiple external tools to provide comprehensive customer support.
+## Contributing
 
-**Key Features:**
-- **Multi-Agent System:** Composed of specialized sub-agents for product information, inventory, and shipping.
-- **Tool Integration:** Leverages multiple tools to fetch and synthesize information from different sources.
-- **A2A Communication:** Utilizes the Agent-to-Agent (A2A) communication protocol.
-- **Scalable Architecture:** Built to be extensible and scalable for real-world applications.
+Contributions are welcome! Please ensure you:
+1.  Follow the existing code style.
+2.  Add docstrings to any new functions or classes.
+3.  Update the READMEs if you introduce new features or requirements.
 
-**Technologies Used:**
-- **Framework:** Google Agent Development Kit (ADK)
-- **Model:** Google Gemini
-- **Deployment:** Uvicorn, FastAPI
+## License
 
----
-
-## 🛠️ Getting Started
-
-Each agent is contained within its own directory and has its own set of instructions and dependencies. To get started with a specific agent, please navigate to its directory and consult the `README.md` file within it.
-
-- **[Av-Chatfriends Instructions](./Av-Chatfriends/README.md)**
-- **[RAG Agents Instructions](./RAG/README.md)**
-- **[Google Adk Customer Support Agent](./Google%20Adk/customer-support-agent.ipynb)**
-
-## 🤝 Contributing
-
-Contributions are welcome! If you have an idea for a new agent, an improvement to an existing one, or a bug fix, please feel free to:
-
-1.  **Fork the repository.**
-2.  **Create a new branch** for your feature or fix.
-3.  **Submit a pull request** with a clear description of your changes.
-
-## 📧 Contact
-
-For any inquiries or collaboration opportunities, please feel free to contact the repository owner. We are always open to discussing new ideas and projects.
+[License Information Here]
