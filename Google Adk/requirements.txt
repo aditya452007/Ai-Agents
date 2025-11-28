@@ -1,0 +1,3 @@
+google-genai
+# Note: The notebook also uses 'google_adk', which typically refers to the Agent Development Kit.
+# Ensure you have access to the Google ADK environment or package.

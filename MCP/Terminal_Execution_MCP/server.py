@@ -19,41 +19,75 @@ import mcp.server.stdio
 
 
 class ShellExecutor:
-    """Handles execution of commands across different shell environments"""
-    
+    """
+    Handles execution of commands across different shell environments.
+
+    This class detects available shells and provides methods to execute commands
+    in CMD, PowerShell, WSL, and Git Bash.
+    """
+
     def __init__(self):
+        """
+        Initialize the ShellExecutor.
+
+        Sets up default timeout and locates Git Bash installation.
+        """
         self.default_timeout = 30
         self.git_bash_path = self._find_git_bash()
-    
+
     def _find_git_bash(self) -> Optional[str]:
-        """Locate Git Bash installation"""
+        """
+        Locate Git Bash installation.
+
+        Searches common installation paths and the system PATH to find the
+        Git Bash executable.
+
+        Returns:
+            Optional[str]: The path to the Git Bash executable, or None if not found.
+        """
         common_paths = [
             r"C:\Program Files\Git\bin\bash.exe",
             r"C:\Program Files (x86)\Git\bin\bash.exe",
             os.path.expandvars(r"%LOCALAPPDATA%\Programs\Git\bin\bash.exe")
         ]
-        
+
         for path in common_paths:
             if os.path.exists(path):
                 return path
-        
+
         # Try to find via PATH
         git_bash = shutil.which("bash")
         if git_bash and "git" in git_bash.lower():
             return git_bash
-        
+
         return None
-    
+
     async def execute_cmd(
-        self, 
-        command: str, 
+        self,
+        command: str,
         working_dir: Optional[str] = None,
         timeout: Optional[int] = None
     ) -> Dict[str, Any]:
-        """Execute command in Windows CMD"""
+        """
+        Execute command in Windows CMD.
+
+        Args:
+            command (str): The command to execute.
+            working_dir (Optional[str]): The directory to execute the command in.
+            timeout (Optional[int]): Execution timeout in seconds.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing execution results:
+                - success (bool): True if execution completed (even with non-zero exit code).
+                - exit_code (int): The process exit code.
+                - stdout (str): Standard output.
+                - stderr (str): Standard error.
+                - shell (str): "CMD".
+                - error (str): Error message if execution failed (e.g. timeout).
+        """
         try:
             timeout_val = timeout or self.default_timeout
-            
+
             process = await asyncio.create_subprocess_exec(
                 "cmd.exe",
                 "/c",
@@ -62,12 +96,12 @@ class ShellExecutor:
                 stderr=asyncio.subprocess.PIPE,
                 cwd=working_dir
             )
-            
+
             stdout, stderr = await asyncio.wait_for(
                 process.communicate(),
                 timeout=timeout_val
             )
-            
+
             return {
                 "success": True,
                 "exit_code": process.returncode,
@@ -75,7 +109,7 @@ class ShellExecutor:
                 "stderr": stderr.decode('utf-8', errors='replace'),
                 "shell": "CMD"
             }
-            
+
         except asyncio.TimeoutError:
             return {
                 "success": False,
@@ -88,17 +122,33 @@ class ShellExecutor:
                 "error": str(e),
                 "shell": "CMD"
             }
-    
+
     async def execute_powershell(
         self,
         command: str,
         working_dir: Optional[str] = None,
         timeout: Optional[int] = None
     ) -> Dict[str, Any]:
-        """Execute command in PowerShell"""
+        """
+        Execute command in PowerShell.
+
+        Args:
+            command (str): The PowerShell command to execute.
+            working_dir (Optional[str]): The directory to execute the command in.
+            timeout (Optional[int]): Execution timeout in seconds.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing execution results:
+                - success (bool): True if execution completed.
+                - exit_code (int): The process exit code.
+                - stdout (str): Standard output.
+                - stderr (str): Standard error.
+                - shell (str): "PowerShell".
+                - error (str): Error message if execution failed.
+        """
         try:
             timeout_val = timeout or self.default_timeout
-            
+
             # Use -NoProfile for faster startup and -NonInteractive for automation
             process = await asyncio.create_subprocess_exec(
                 "powershell.exe",
@@ -110,12 +160,12 @@ class ShellExecutor:
                 stderr=asyncio.subprocess.PIPE,
                 cwd=working_dir
             )
-            
+
             stdout, stderr = await asyncio.wait_for(
                 process.communicate(),
                 timeout=timeout_val
             )
-            
+
             return {
                 "success": True,
                 "exit_code": process.returncode,
@@ -123,7 +173,7 @@ class ShellExecutor:
                 "stderr": stderr.decode('utf-8', errors='replace'),
                 "shell": "PowerShell"
             }
-            
+
         except asyncio.TimeoutError:
             return {
                 "success": False,
@@ -136,17 +186,33 @@ class ShellExecutor:
                 "error": str(e),
                 "shell": "PowerShell"
             }
-    
+
     async def execute_wsl(
         self,
         command: str,
         working_dir: Optional[str] = None,
         timeout: Optional[int] = None
     ) -> Dict[str, Any]:
-        """Execute command in WSL/Ubuntu"""
+        """
+        Execute command in WSL/Ubuntu.
+
+        Args:
+            command (str): The bash command to execute in WSL.
+            working_dir (Optional[str]): The Windows directory to execute in (automatically converted to WSL path).
+            timeout (Optional[int]): Execution timeout in seconds.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing execution results:
+                - success (bool): True if execution completed.
+                - exit_code (int): The process exit code.
+                - stdout (str): Standard output.
+                - stderr (str): Standard error.
+                - shell (str): "WSL/Ubuntu" or "WSL".
+                - error (str): Error message if execution failed or WSL not found.
+        """
         try:
             timeout_val = timeout or self.default_timeout
-            
+
             # Check if WSL is available
             wsl_check = await asyncio.create_subprocess_exec(
                 "wsl.exe",
@@ -155,21 +221,21 @@ class ShellExecutor:
                 stderr=asyncio.subprocess.PIPE
             )
             await wsl_check.communicate()
-            
+
             if wsl_check.returncode != 0:
                 return {
                     "success": False,
                     "error": "WSL is not installed or not configured properly",
                     "shell": "WSL"
                 }
-            
+
             # Convert Windows path to WSL path if working_dir is provided
             wsl_command = command
             if working_dir:
                 # Convert Windows path to WSL path
                 wsl_path = working_dir.replace("\\", "/").replace("C:", "/mnt/c")
                 wsl_command = f"cd {wsl_path} && {command}"
-            
+
             process = await asyncio.create_subprocess_exec(
                 "wsl.exe",
                 "-e",
@@ -179,12 +245,12 @@ class ShellExecutor:
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
             )
-            
+
             stdout, stderr = await asyncio.wait_for(
                 process.communicate(),
                 timeout=timeout_val
             )
-            
+
             return {
                 "success": True,
                 "exit_code": process.returncode,
@@ -192,7 +258,7 @@ class ShellExecutor:
                 "stderr": stderr.decode('utf-8', errors='replace'),
                 "shell": "WSL/Ubuntu"
             }
-            
+
         except asyncio.TimeoutError:
             return {
                 "success": False,
@@ -205,14 +271,30 @@ class ShellExecutor:
                 "error": str(e),
                 "shell": "WSL"
             }
-    
+
     async def execute_gitbash(
         self,
         command: str,
         working_dir: Optional[str] = None,
         timeout: Optional[int] = None
     ) -> Dict[str, Any]:
-        """Execute command in Git Bash"""
+        """
+        Execute command in Git Bash.
+
+        Args:
+            command (str): The bash command to execute in Git Bash.
+            working_dir (Optional[str]): The Windows directory to execute in.
+            timeout (Optional[int]): Execution timeout in seconds.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing execution results:
+                - success (bool): True if execution completed.
+                - exit_code (int): The process exit code.
+                - stdout (str): Standard output.
+                - stderr (str): Standard error.
+                - shell (str): "Git Bash".
+                - error (str): Error message if execution failed or Git Bash not found.
+        """
         try:
             if not self.git_bash_path:
                 return {
@@ -220,9 +302,9 @@ class ShellExecutor:
                     "error": "Git Bash not found. Please install Git for Windows.",
                     "shell": "Git Bash"
                 }
-            
+
             timeout_val = timeout or self.default_timeout
-            
+
             # Convert Windows path to Git Bash format if needed
             bash_command = command
             if working_dir:
@@ -231,7 +313,7 @@ class ShellExecutor:
                 if git_path[1] == ":":
                     git_path = "/" + git_path[0].lower() + git_path[2:]
                 bash_command = f"cd {git_path} && {command}"
-            
+
             process = await asyncio.create_subprocess_exec(
                 self.git_bash_path,
                 "-c",
@@ -239,12 +321,12 @@ class ShellExecutor:
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
             )
-            
+
             stdout, stderr = await asyncio.wait_for(
                 process.communicate(),
                 timeout=timeout_val
             )
-            
+
             return {
                 "success": True,
                 "exit_code": process.returncode,
@@ -252,7 +334,7 @@ class ShellExecutor:
                 "stderr": stderr.decode('utf-8', errors='replace'),
                 "shell": "Git Bash"
             }
-            
+
         except asyncio.TimeoutError:
             return {
                 "success": False,
@@ -274,7 +356,12 @@ executor = ShellExecutor()
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:
-    """List available shell execution tools"""
+    """
+    List available shell execution tools.
+
+    Returns:
+        list[Tool]: A list of available tools for executing commands in different shells.
+    """
     return [
         Tool(
             name="execute_cmd",
@@ -373,13 +460,22 @@ async def list_tools() -> list[Tool]:
 
 @app.call_tool()
 async def call_tool(name: str, arguments: dict) -> list[TextContent]:
-    """Handle tool execution requests"""
-    
+    """
+    Handle tool execution requests.
+
+    Args:
+        name (str): The name of the tool to execute.
+        arguments (dict): The arguments passed to the tool.
+
+    Returns:
+        list[TextContent]: The result of the command execution or an error message.
+    """
+
     try:
         command = arguments.get("command")
         working_dir = arguments.get("working_dir")
         timeout = arguments.get("timeout")
-        
+
         if not command:
             return [TextContent(
                 type="text",
@@ -388,7 +484,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                     "error": "Command parameter is required"
                 }, indent=2)
             )]
-        
+
         # Execute based on tool name
         if name == "execute_cmd":
             result = await executor.execute_cmd(command, working_dir, timeout)
@@ -406,12 +502,12 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                     "error": f"Unknown tool: {name}"
                 }, indent=2)
             )]
-        
+
         return [TextContent(
             type="text",
             text=json.dumps(result, indent=2)
         )]
-        
+
     except Exception as e:
         return [TextContent(
             type="text",
@@ -423,7 +519,17 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 
 
 async def main():
-    """Run the MCP server"""
+    """
+    Run the MCP server.
+
+    Starts the server using stdio transport.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
         await app.run(
             read_stream,

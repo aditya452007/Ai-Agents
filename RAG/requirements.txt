@@ -1,0 +1,9 @@
+langchain-huggingface
+beautifulsoup4
+langchain-community
+langchain-text-splitters
+langchain-chroma
+langchain-core
+langchain-google-genai
+pymupdf
+faiss-cpu
