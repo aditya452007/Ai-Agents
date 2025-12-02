@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MultiRAG | Neural Nexus</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="scanlines"></div>
+
+    <div id="app">
+        <section id="view-ingestion">
+            <div class="glass-panel hub-card">
+                <header class="hub-header">
+                    <div class="logo">
+                        <i class="ph-fill ph-brain"></i>
+                        <span>MultiRAG</span>
+                    </div>
+                    <div class="status-badge">System Online</div>
+                </header>
+                
+                <div class="ingest-content">
+                    <h1 class="hero-title">Knowledge <span class="text-gradient">Injection</span></h1>
+                    <p class="hero-subtitle">Upload documents or crawl the web to initialize the neural index.</p>
+
+                    <div id="drop-zone" class="drop-zone">
+                        <div class="icon-wrapper">
+                            <i class="ph-duotone ph-file-cloud"></i>
+                        </div>
+                        <h3>Drop Data Source</h3>
+                        <p>PDF, MD, TXT (Max 50MB)</p>
+                        <input type="file" id="file-input" hidden accept=".pdf,.md,.txt">
+                    </div>
+
+                    <div class="divider">
+                        <span>OR CONNECT VIA URL</span>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="ph ph-link input-icon"></i>
+                        <input type="text" id="url-input" placeholder="https://docs.anthropic.com/..." autocomplete="off">
+                        <button id="scrape-btn" class="glow-btn">
+                            <i class="ph-bold ph-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="processing-overlay" class="hidden">
+                    <div class="loader-content">
+                        <div class="spinner"></div>
+                        <span class="mono" id="terminal-text">Initializing Vector Stream...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-synapse" class="hidden">
+            
+            <aside class="sidebar glass-panel">
+                <div class="sidebar-header">
+                    <div class="logo-small">
+                        <i class="ph-fill ph-brain"></i>
+                        <span>MultiRAG</span>
+                    </div>
+                </div>
+                
+                <div class="meta-section">
+                    <div class="section-label">Active Knowledge Base</div>
+                    <div class="meta-card">
+                        <div class="meta-row">
+                            <i class="ph ph-file-text"></i>
+                            <span id="meta-filename" class="text-truncate">unknown.pdf</span>
+                        </div>
+                        <div class="meta-details">
+                            <span id="meta-size" class="tag">0 MB</span>
+                            <span id="meta-tokens" class="tag">0 Tok</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-footer">
+                    <button id="reset-session" class="danger-btn">
+                        <i class="ph ph-trash"></i>
+                        <span>Purge Memory</span>
+                    </button>
+                </div>
+            </aside>
+
+            <main class="chat-viewport">
+                <header class="chat-header glass-panel">
+                    <div class="model-status">
+                        <div class="indicator pulse"></div>
+                        <span>Gemini 2.5 Flash // RAG Enabled</span>
+                    </div>
+                </header>
+
+                <div id="chat-stream" class="chat-stream">
+                    <div class="message ai entrance-anim">
+                        <div class="avatar">
+                            <i class="ph-fill ph-sparkle"></i>
+                        </div>
+                        <div class="content glass-bubble">
+                            <p>Neural link established. Accessing data from <span id="chat-intro-filename" class="text-accent">...</span>. <br>I am ready to process your queries.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-dock glass-panel">
+                    <div class="input-wrapper">
+                        <textarea id="chat-input" rows="1" placeholder="Query the vector store..."></textarea>
+                        <button id="send-btn" class="send-btn">
+                            <i class="ph-fill ph-paper-plane-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
