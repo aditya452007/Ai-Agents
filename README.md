@@ -34,9 +34,10 @@ Contains Jupyter notebooks demonstrating RAG pipelines for different data source
 
 *   **Path:** `RAG/`
 *   **Contents:**
+    *   `MultRAG System/`: A unified advanced RAG system combining PDF and URL ingestion with a FastAPI backend and a modern HTML/JS frontend. See [RAG/MultRAG System/Readme.md](RAG/MultRAG%20System/Readme.md).
     *   `RAG_For_Url.ipynb`: RAG pipeline for querying web content.
     *   `Rag_For_Pdf.ipynb`: RAG pipeline for querying PDF documents.
-*   **Requirements:** See `RAG/requirements.txt`.
+*   **Requirements:** See `RAG/requirements.txt` or specific notebook instructions.
 
 ### 4. Google Adk
 Demonstrates a customer support agent using Google's Agent Development Kit (ADK) and Gemini models.
